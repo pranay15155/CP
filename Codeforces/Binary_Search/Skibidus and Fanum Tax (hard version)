@@ -1,0 +1,184 @@
+Codeforces Round 1003 (Div. 4)
+
+https://codeforces.com/contest/2065/problem/C2
+
+//explanation pdf
+https://github.com/pranay15155/pdf/blob/main/Skibidus%20and%20Fanum%20Tax.pdf
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+
+#if __cplusplus < 201703L
+template <typename... Ts>
+using void_t = void;
+#else
+using std::void_t;
+#endif
+
+template <typename T, typename = void>
+struct is_iterable : false_type
+{
+};
+
+template <typename T>
+struct is_iterable<T, void_t<
+                          decltype(begin(declval<T>())),
+                          decltype(end(declval<T>()))>> : true_type
+{
+};
+
+template <typename T>
+struct is_string : false_type
+{
+};
+
+template <>
+struct is_string<string> : true_type
+{
+};
+
+template <typename T, typename U>
+ostream &operator<<(ostream &os, const pair<T, U> &p)
+{
+    os << "(" << p.first << ", " << p.second << ")";
+    return os;
+}
+
+template <typename T>
+typename enable_if<is_iterable<T>::value && !is_string<T>::value, ostream &>::type
+operator<<(ostream &os, const T &container)
+{
+    os << "{ ";
+    for (const auto &elem : container)
+    {
+        os << elem << " ";
+    }
+    os << "}";
+    return os;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, stack<T> s)
+{
+    os << "stack { ";
+    while (!s.empty())
+    {
+        os << s.top() << " ";
+        s.pop();
+    }
+    os << "}";
+    return os;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, queue<T> q)
+{
+    os << "queue { ";
+    while (!q.empty())
+    {
+        os << q.front() << " ";
+        q.pop();
+    }
+    os << "}";
+    return os;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, priority_queue<T> pq)
+{
+    os << "priority_queue { ";
+    while (!pq.empty())
+    {
+        os << pq.top() << " ";
+        pq.pop();
+    }
+    os << "}";
+    return os;
+}
+
+template <typename T, typename Container, typename Compare>
+ostream &operator<<(ostream &os, priority_queue<T, Container, Compare> pq)
+{
+    os << "priority_queue { ";
+    while (!pq.empty())
+    {
+        os << pq.top() << " ";
+        pq.pop();
+    }
+    os << "}";
+    return os;
+}
+
+ll f(ll target, vector<ll> &nums) 
+{
+    ll ans = -1;
+    ll low=0,high=nums.size()-1;
+    while(low<=high){
+        ll mid=((low+high)/2);
+        if(nums[mid]>=target){
+            ans=mid;
+            high=mid-1;
+        }
+        else{
+            low=mid+1;
+        }
+    }
+    return ans;
+}
+// least value which is greater than or equal to target and it returns index 
+
+void pranay()
+{
+    ll n, m;
+    cin >> n >> m;
+    vector<ll> a, b;
+    for (int i = 0; i < n; i++)
+    {
+        ll x;
+        cin >> x;
+        a.push_back(x);
+    }
+    for (int i = 0; i < m; i++)
+    {
+        ll x;
+        cin >> x;
+        b.push_back(x);
+    }
+    sort(b.begin(), b.end());
+    ll prev = -1e10;
+    for (int i = 0; i < n; i++)
+    {
+        ll lowest_index = f(a[i] + prev, b);
+        if (a[i] < prev)
+        {
+            if (lowest_index==-1)
+            {
+                cout << "NO" << endl;
+                return;
+            }
+        }
+        if (a[i] < prev && b[lowest_index] - a[i] >= prev)
+        {
+            a[i] = b[lowest_index] - a[i];
+        }
+        else if (a[i] >= prev && b[lowest_index] - a[i] >= prev)
+        {
+            a[i] = min(a[i], b[lowest_index] - a[i]);
+        }
+        prev = a[i];
+    }
+    cout << "YES" << endl;
+}
+
+int main()
+{
+    int testcase;
+    cin >> testcase;
+    // testcase = 1;
+    while (testcase--)
+    {
+        pranay();
+    }
+}
